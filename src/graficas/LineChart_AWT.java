@@ -32,6 +32,7 @@ public class LineChart_AWT extends ApplicationFrame {
 		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 		Set<Integer> nodos = valores.keySet();
 		for (Integer integer : nodos) {
+			
 			dataset.addValue(valores.get(integer), "Grafica 1", integer);
 		}
 		return dataset;

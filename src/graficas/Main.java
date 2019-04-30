@@ -8,10 +8,10 @@ import org.jfree.ui.RefineryUtilities;
 public class Main {
 	
 	/*
-	 * Tespera = despertar - start; Tsincro = (entradasc - despertar) + (stop - salidaSC); Tejecucion =  salidaSC - entradaSC; Ttotal= stop - start
+	 * Tutil = Tejecucion/Ttotal; Tsincro = (entradasc - start) + (stop - salidaSC); Tejecucion =  salidaSC - entradaSC; Ttotal= stop - start
 	 */
-	 public static final String GRAFICA = "Tespera"; 
-//	 public static final String GRAFICA = "Tsincro"; 
+//	 public static final String GRAFICA = "Putil"; 
+	 public static final String GRAFICA = "Tsincro"; 
 //	 public static final String GRAFICA = "Tejecucion"; 
 //	 public static final String GRAFICA = "Ttotal"; 
 
@@ -22,8 +22,8 @@ public class Main {
 		long vmedio = 0;
 		for ( Integer key : procesos.keySet() ) {
 			switch (GRAFICA) {
-			case "Tespera":
-				vmedio += procesos.get(key).getTespera();
+			case "Putil":
+				vmedio += procesos.get(key).getPutil();
 				break;
 			case "Tsincro":
 				vmedio += procesos.get(key).getTsincro();
@@ -46,8 +46,8 @@ public class Main {
 		vmedio = 0;
 		for ( Integer key : procesos.keySet() ) {
 			switch (GRAFICA) {
-			case "Tespera":
-				vmedio += procesos.get(key).getTespera();
+			case "Putil":
+				vmedio += procesos.get(key).getPutil();
 				break;
 			case "Tsincro":
 				vmedio += procesos.get(key).getTsincro();
@@ -70,8 +70,8 @@ public class Main {
 		vmedio = 0;
 		for ( Integer key : procesos.keySet() ) {
 			switch (GRAFICA) {
-			case "Tespera":
-				vmedio += procesos.get(key).getTespera();
+			case "Putil":
+				vmedio += procesos.get(key).getPutil();
 				break;
 			case "Tsincro":
 				vmedio += procesos.get(key).getTsincro();
@@ -95,8 +95,8 @@ public class Main {
 		vmedio = 0;
 		for ( Integer key : procesos.keySet() ) {
 			switch (GRAFICA) {
-			case "Tespera":
-				vmedio += procesos.get(key).getTespera();
+			case "Putil":
+				vmedio += procesos.get(key).getPutil();
 				break;
 			case "Tsincro":
 				vmedio += procesos.get(key).getTsincro();
@@ -120,8 +120,8 @@ public class Main {
 		vmedio = 0;
 		for ( Integer key : procesos.keySet() ) {
 			switch (GRAFICA) {
-			case "Tespera":
-				vmedio += procesos.get(key).getTespera();
+			case "Putil":
+				vmedio += procesos.get(key).getPutil();
 				break;
 			case "Tsincro":
 				vmedio += procesos.get(key).getTsincro();

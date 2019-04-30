@@ -39,15 +39,12 @@ public class Parser {
 		
 		for (Entrada entrada : entradas) {
 			if (!procesos.containsKey(entrada.getProceso())) {
-				procesos.put(entrada.getProceso(), new Proceso(entrada.getProceso(), 0, 0, 0, 0, 0));
+				procesos.put(entrada.getProceso(), new Proceso(entrada.getProceso(), 0, 0, 0, 0));
 			} 
 			Proceso temporal = procesos.get(entrada.getProceso());
 			switch (entrada.getFuncion()) {
 			case "start":
 				temporal.setStart(entrada.getTiempo());
-				break;
-			case "despertar":
-				temporal.setDespertar(entrada.getTiempo());
 				break;
 			case "entradaSC":
 				temporal.setEntradaSC(entrada.getTiempo());

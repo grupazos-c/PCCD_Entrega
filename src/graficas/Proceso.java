@@ -4,17 +4,17 @@ public class Proceso {
 	
 	private int identificador;
 	private long start;
-	private long despertar;
 	private long entradaSC;
 	private long salidaSC;
 	private long stop;
 	
-	public long getTespera() {
-		return despertar - start;
+	
+	public long getPutil() {
+		return ((this.getTejecucion()/this.getTtotal())*100);
 	}
 
 	public long getTsincro() {
-		return (entradaSC - despertar) + (stop - salidaSC);
+		return (entradaSC - start) + (stop - salidaSC);
 	}
 
 	public long getTejecucion() {
@@ -33,14 +33,14 @@ public class Proceso {
 	 * @param salidaSC
 	 * @param stop
 	 */
-	public Proceso(int identificador, long start, long despertar, long entradaSC, long salidaSC, long stop) {
+	public Proceso(int identificador, long start, long entradaSC, long salidaSC, long stop) {
 		this.identificador = identificador;
 		this.start = start;
-		this.despertar = despertar;
 		this.entradaSC = entradaSC;
 		this.salidaSC = salidaSC;
 		this.stop = stop;
 	}
+	
 	/**
 	 * @return the identificador
 	 */
@@ -64,18 +64,6 @@ public class Proceso {
 	 */
 	public void setStart(long start) {
 		this.start = start;
-	}
-	/**
-	 * @return the despertar
-	 */
-	public long getDespertar() {
-		return despertar;
-	}
-	/**
-	 * @param despertar the despertar to set
-	 */
-	public void setDespertar(long despertar) {
-		this.despertar = despertar;
 	}
 	/**
 	 * @return the entradaSC
