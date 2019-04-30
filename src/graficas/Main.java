@@ -10,8 +10,8 @@ public class Main {
 	/*
 	 * Tutil = Tejecucion/Ttotal; Tsincro = (entradasc - start) + (stop - salidaSC); Tejecucion =  salidaSC - entradaSC; Ttotal= stop - start
 	 */
-//	 public static final String GRAFICA = "Putil"; 
-	 public static final String GRAFICA = "Tsincro"; 
+	 public static final String GRAFICA = "Putil"; 
+//	 public static final String GRAFICA = "Tsincro"; 
 //	 public static final String GRAFICA = "Tejecucion"; 
 //	 public static final String GRAFICA = "Ttotal";
 	 

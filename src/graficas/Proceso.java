@@ -9,8 +9,11 @@ public class Proceso {
 	private long stop;
 	
 	
-	public long getPutil() {
-		return ((this.getTejecucion()/this.getTtotal())*100);
+	public double getPutil() {
+		long Te = this.getTejecucion();
+		long Tt = this.getTtotal();
+		double result = ((double) Te)/Tt;
+		return (result*100);
 	}
 
 	public long getTsincro() {
