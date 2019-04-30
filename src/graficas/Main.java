@@ -13,8 +13,14 @@ public class Main {
 //	 public static final String GRAFICA = "Putil"; 
 	 public static final String GRAFICA = "Tsincro"; 
 //	 public static final String GRAFICA = "Tejecucion"; 
-//	 public static final String GRAFICA = "Ttotal"; 
-
+//	 public static final String GRAFICA = "Ttotal";
+	 
+	 //Si nuevo está a true se carga la tabla anterior
+	 public static final boolean NUEVO = false;
+//	 public static final boolean NUEVO = true;
+	 
+	 
+	 
 	public static void main(String[] args) throws IOException {
 
 		HashMap<Integer, Long> valores = new HashMap<Integer, Long>();
@@ -140,7 +146,7 @@ public class Main {
 
 		valores.put(5, vmedio/procesos.keySet().size());
 		
-		LineChart_AWT chart = new LineChart_AWT("Grafica de Procesos", "Procesos de pago", valores);
+		LineChart_AWT chart = new LineChart_AWT("Grafica de Procesos", "Procesos de pago", valores, NUEVO);
 
 		chart.pack();
 		RefineryUtilities.centerFrameOnScreen(chart);
