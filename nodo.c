@@ -100,9 +100,6 @@ int main(int argc, char *argv[]) {
 
 	inicializarNodo();
 
-	char * valor = "start";
-	log_print(0, valor);
-
 	struct MensajeIntranodo proceso;
 
 	peticiones[id_nodo].id_peticion = mi_peticion;
@@ -237,8 +234,6 @@ void *lector() {
 
 	if (lectores == 0 && leyendo == 0) { 		//Soy el primer lector
 
-		log_print(mi_identificador, "despertar");
-
 		sem_post(&acceso_leyendo);
 		lectores++;
 		sem_post(&acceso_lectores);
@@ -285,8 +280,6 @@ void *lector() {
 			sem_post(&acceso_leyendo);
 
 	} else if (lectores > 0) { //tengo que esperar a que el lector delante de mí me dé permiso
-
-		log_print(mi_identificador, "despertar");
 
 		sem_post(&acceso_leyendo);
 		lectores++;
@@ -351,8 +344,6 @@ void *lector() {
 			sem_post(&acceso_leyendo);
 
 	} else if (leyendo > 0) { //puedo entrar SOLO si no hay escritores esperanod, en cuyo caso me transformaré en un lecotr primero
-
-		log_print(mi_identificador, "despertar");
 
 		printf("\nMe quedo en el tercer if");
 
@@ -539,7 +530,6 @@ void *escritor() {
 		peticiones[id_nodo].id_peticion = mi_peticion;
 		peticiones[id_nodo].prioridad = tipoproceso;
 
-		log_print(mi_identificador, "despertar");
 
 		sem_wait(&acceso_TESTIGO);
 		if (TESTIGO == 0) {
