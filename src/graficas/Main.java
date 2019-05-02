@@ -10,8 +10,8 @@ public class Main {
 	/*
 	 * Tutil = Tejecucion/Ttotal; Tsincro = (entradasc - start) + (stop - salidaSC); Tejecucion =  salidaSC - entradaSC; Ttotal= stop - start
 	 */
-	 public static final String GRAFICA = "Putil"; 
-//	 public static final String GRAFICA = "Tsincro"; 
+//	 public static final String GRAFICA = "Putil"; 
+	 public static final String GRAFICA = "Tsincro"; 
 //	 public static final String GRAFICA = "Tejecucion"; 
 //	 public static final String GRAFICA = "Ttotal";
 	 
@@ -45,8 +45,9 @@ public class Main {
 				break;
 			}
 		}
-
-		valores.put(1, vmedio/procesos.keySet().size());
+		double x = ((double) vmedio)/procesos.keySet().size();
+		System.out.println((long)x);
+		valores.put(1, (long) x);
 		
 		procesos = Parser.parse("logs/log2.txt");
 		vmedio = 0;
@@ -143,10 +144,12 @@ public class Main {
 				break;
 			}
 		}
+		x = ((double) vmedio)/procesos.keySet().size();
+		valores.put(5, (long)x);
 
-		valores.put(5, vmedio/procesos.keySet().size());
+		System.out.println((long)x);
 		
-		LineChart_AWT chart = new LineChart_AWT("Grafica de Procesos", "Procesos de pago", valores, NUEVO);
+		LineChart_AWT chart = new LineChart_AWT("Grafica de Procesos", "Procesos de pago", valores, false);
 
 		chart.pack();
 		RefineryUtilities.centerFrameOnScreen(chart);

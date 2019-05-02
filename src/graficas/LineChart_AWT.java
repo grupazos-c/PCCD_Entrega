@@ -18,11 +18,10 @@ public class LineChart_AWT extends ApplicationFrame {
 	 */
 	private static final long serialVersionUID = -4243183311610374674L;
 	
-	DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 
 	public LineChart_AWT(String applicationTitle, String chartTitle, HashMap<Integer, Long> valores, boolean nuevo) {
 		super(applicationTitle);
-		JFreeChart lineChart = ChartFactory.createLineChart(chartTitle, "Nodos", "T(ns)", createDataset(valores, dataset),
+		JFreeChart lineChart = ChartFactory.createLineChart(chartTitle, "Nodos", "T(ns)", createDataset(valores, 0),
 				PlotOrientation.VERTICAL, true, true, false);
 
 		ChartPanel chartPanel = new ChartPanel(lineChart);
@@ -30,7 +29,8 @@ public class LineChart_AWT extends ApplicationFrame {
 		setContentPane(chartPanel);
 	}
 
-	private DefaultCategoryDataset createDataset(HashMap<Integer, Long> valores, DefaultCategoryDataset dataset) {
+	private DefaultCategoryDataset createDataset(HashMap<Integer, Long> valores, int i) {
+		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 		Set<Integer> nodos = valores.keySet();
 		for (Integer integer : nodos) {
 			switch (Main.GRAFICA) {
