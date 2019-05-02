@@ -89,11 +89,12 @@ void log_print(int id_proceso, char *evento) {
  */
 int main(int argc, char *argv[]) {
 
-	if (argc != 2) {
+	if (argc != 3) {
 		printf("Numero de argumentos incorrecto.\n");
 		exit(0);
 	} else {
 		id_nodo = atoi(argv[1]);
+		num_nodos = atoi(argv[2]);
 	}
 
 	printf("Inicializando el nodo...\n");
@@ -559,7 +560,7 @@ void *escritor() {
 					atendidas[i] = testigomsg.mtext.atendidas[i];
 			}
 			printf("\nNodo %i (Escritor): Testigo recibido\n", id_nodo);
-			//dentro = 1;
+			//dentro = 1; TODO aún necesitamos dentro, no teemos otra forma de saber si un hilo está ejecutando un proceso o solo etá de paseo
 
 			sem_wait(&acceso_TESTIGO);
 			TESTIGO = 1;

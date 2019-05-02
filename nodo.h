@@ -19,7 +19,7 @@
 
 #define TIPO_PETICION_TESTIGO 1
 #define TIPO_ENTREGA_TESTIGO 2
-#define NUM_NODOS 2
+//#define NUM_NODOS 2
 
 
 void inicializarNodo();
@@ -95,4 +95,5 @@ struct info_cola {
 //VARIABLES FIJAS. Se inicializan una vez y no se vuelven a editar. No necesitan Semaforos,
 int idBuzonIntranodo; //ID del buzon del nodo especifico para mensajes internos (se crea en base a su id)
 int id_nodo; //id del nodo
+int num_nodos;
 //////////////////////////////////////////////////////////////////////////////////////////
