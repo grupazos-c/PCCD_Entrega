@@ -24,7 +24,7 @@ struct info_cola procesos_cola;
  *	 - Cambiar hilo de escritores para que se lleve bien con el nuevo hilo de lectores	*
  *	 - Cambiar el hilo receptor para que haga lo suyo									*
  *	 - Ver como implementamos las copias de los testigos								*
- *	hola a todos																					*
+ *	hola a todos																		*
  ****************************************************************************************/
 
 void log_print(int id_proceso, char *evento) {
@@ -96,9 +96,10 @@ int main(int argc, char *argv[]) {
 		id_nodo = atoi(argv[1]);
 	}
 
-	printf("Inicializando el nodo...\n");
-
 	inicializarNodo();
+
+	//char * valor = "start";
+	//log_print(0, valor);
 
 	struct MensajeIntranodo proceso;
 
@@ -108,26 +109,19 @@ int main(int argc, char *argv[]) {
 	do {
 
 		// SI EN msgrcv EL ARGUMENTO TYPE ES NEGATIVO, COGERA EL PRIMERO CON EL TIPO MAS BAJO (Y MENOR QUE EL VALOR ABSOLUTO DEL ARGUMENTO TYPE DE msgrcv)
-		printf("\nNodo %i (Main): Esperando por mensajes intranodo...\n",
-				id_nodo);
-		if (msgrcv(idBuzonIntranodo, &proceso, sizeof(proceso) - sizeof(long),
-				-4, 0) == -1) {
+		//printf("\nNodo %i (Main): Esperando por mensajes intranodo...\n", id_nodo);
+		if (msgrcv(idBuzonIntranodo, &proceso, sizeof(proceso) - sizeof(long), -4, 0) == -1) {
 			printf("\nError en la recepción del mensaje\n");
 			perror("msgrcv");
 			exit(0);
 		}
-		printf(
-				"\nNodo %i (Main): Se ha recogido un proceso de la cola de procesos\n",
-				id_nodo);
 
 		int tipoproceso = proceso.mtype;
-
-		printf("\nNodo %i (Main): Proceso de tipo %i\n", id_nodo, tipoproceso);
+		printf("\nNodo %i (Main): Se ha recogido un proceso tipo %i de buzon de entrada\n", id_nodo, tipoproceso);
 
 		switch (tipoproceso) {
 		case 1:
-			printf("\nNodo %i (Main): Añadiendo proceso de tipo 1 a la cola\n",
-					id_nodo);
+			printf("\nNodo %i (Main): Añadiendo proceso de tipo 1 a la cola\n", id_nodo);
 			procesos_cola.anulaciones++;
 
 			sem_wait(&acceso_hilo_escritor);
@@ -139,8 +133,7 @@ int main(int argc, char *argv[]) {
 			break;
 
 		case 2:
-			printf("\nNodo %i (Main): Añadiendo proceso de tipo 2 a la cola\n",
-					id_nodo);
+			printf("\nNodo %i (Main): Añadiendo proceso de tipo 2 a la cola\n", id_nodo);
 			procesos_cola.pagos++;
 
 			sem_wait(&acceso_hilo_escritor);
@@ -152,8 +145,7 @@ int main(int argc, char *argv[]) {
 			break;
 
 		case 3:
-			printf("\nNodo %i (Main): Añadiendo proceso de tipo 3 a la cola\n",
-					id_nodo);
+			printf("\nNodo %i (Main): Añadiendo proceso de tipo 3 a la cola\n", id_nodo);
 			procesos_cola.prereservas++;
 
 			sem_wait(&acceso_hilo_escritor);
@@ -165,16 +157,13 @@ int main(int argc, char *argv[]) {
 			break;
 
 		case 4:
-			printf("\nNodo %i (Main): Añadiendo proceso de tipo 4 a la cola\n",
-					id_nodo);
+			printf("\nNodo %i (Main): Añadiendo proceso de tipo 4 a la cola\n", id_nodo);
 			initLector();
 			procesos_cola.consultas++;
 			break;
 
 		default:
-			printf(
-					"\nNodo %i (Main): No se puede ejecutar un proceso de tipo %i\n",
-					id_nodo, tipoproceso);
+			printf("\nNodo %i (Main): No se puede ejecutar un proceso de tipo %i\n", id_nodo, tipoproceso);
 			continue;
 		}
 
@@ -191,7 +180,7 @@ void initEscritor() {
 	pthread_t hiloEscritor;
 	//Iniciamos el hilo encargado de la gestion de los procesos intranodo/////////
 	if (pthread_create(&hiloEscritor, NULL, (void *) escritor, NULL) != 0) {
-		printf("No se ha podido iniciar el hilo de gestion de escritor.\n");
+		printf("No se ha podido iniciar el hilo de gestion de escritor\n");
 		perror("pthread_create");
 		exit(0);
 	} else {
@@ -227,12 +216,16 @@ void *lector() {
 	int mi_identificador = identificador_ejecucion++;
 	sem_post(&acceso_id_ejecucion);
 
-	log_print(mi_identificador, "start");
+	//log_print(mi_identificador, "start");
+	printf("\nNodo %i (Lector): Comienza el proceso\n", id_nodo);
 
 	sem_wait(&acceso_lectores);
 	sem_wait(&acceso_leyendo);
 
 	if (lectores == 0 && leyendo == 0) { 		//Soy el primer lector
+
+		//log_print(mi_identificador, "despertar");
+		printf("\nNodo %i (Lector): Despierto\n", id_nodo);
 
 		sem_post(&acceso_leyendo);
 		lectores++;
@@ -251,15 +244,15 @@ void *lector() {
 		/****************************
 		 * 	Sección crítica			*
 		 ****************************/
-		log_print(mi_identificador, "entradaSC");
+		//log_print(mi_identificador, "entradaSC");
 		printf("\nNodo %i (Lector): Estoy en mi Sección crítica\n", id_nodo);
 
 		struct timespec tim, tim2;
 		tim.tv_sec = 0;
 		tim.tv_nsec = 20000;
 		nanosleep(&tim, &tim2);
-
-		log_print(mi_identificador, "salidaSC");
+		sleep(4);
+		//log_print(mi_identificador, "salidaSC");
 		printf("\nNodo %i (Lector): He salido de la seccion critica\n",
 				id_nodo);
 		/****************************
@@ -280,6 +273,9 @@ void *lector() {
 			sem_post(&acceso_leyendo);
 
 	} else if (lectores > 0) { //tengo que esperar a que el lector delante de mí me dé permiso
+
+		//log_print(mi_identificador, "despertar");
+		printf("\nNodo %i (Lector): Despierto\n", id_nodo);
 
 		sem_post(&acceso_leyendo);
 		lectores++;
@@ -314,16 +310,17 @@ void *lector() {
 		/****************************
 		 * 	Sección crítica			*
 		 ****************************/
-		log_print(mi_identificador, "entradaSC");
+		//log_print(mi_identificador, "entradaSC");
 
 		printf("\nNodo %i (Lector): Estoy en mi Sección crítica\n", id_nodo);
 		struct timespec tim, tim2;
 		tim.tv_sec = 0;
 		tim.tv_nsec = 20000;
 		nanosleep(&tim, &tim2);
+		sleep(4);
 		printf("\nNodo %i (Lector): He salido de la seccion critica\n",
 				id_nodo);
-		log_print(mi_identificador, "salidaSC");
+		//log_print(mi_identificador, "salidaSC");
 
 		/****************************
 		 *  FIN	Sección crítica		*
@@ -343,9 +340,12 @@ void *lector() {
 		} else
 			sem_post(&acceso_leyendo);
 
-	} else if (leyendo > 0) { //puedo entrar SOLO si no hay escritores esperanod, en cuyo caso me transformaré en un lecotr primero
+	} else if (leyendo > 0) { //puedo entrar SOLO si no hay escritores esperando, en cuyo caso me transformaré en un lecotr primero
 
-		printf("\nMe quedo en el tercer if");
+		//log_print(mi_identificador, "despertar");
+		printf("\nNodo %i (Lector): Despierto\n", id_nodo);
+
+		//printf("\nMe quedo en el tercer if");
 
 		sem_post(&acceso_leyendo);
 		lectores++;
@@ -370,7 +370,7 @@ void *lector() {
 		sem_wait(&acceso_lectores);
 		if (lectores > 0) {
 			sem_post(&acceso_lectores);
-			sem_post(&paso_lectores); //aviso al siguieten lector, él deberá averiguar si puede o no ejecutarse
+			sem_post(&paso_lectores); //aviso al siguiente lector, él deberá averiguar si puede o no ejecutarse
 		} else {
 			sem_post(&acceso_lectores);
 		}
@@ -378,14 +378,15 @@ void *lector() {
 		/****************************
 		 * 	Sección crítica			*
 		 ****************************/
-		log_print(mi_identificador, "entradaSC");
+		//log_print(mi_identificador, "entradaSC");
 		printf("\nNodo %i (Lector): Estoy en mi Sección crítica\n", id_nodo);
 		struct timespec tim, tim2;
 		tim.tv_sec = 0;
 		tim.tv_nsec = 20000;
 		nanosleep(&tim, &tim2);
+		sleep(4);
 		printf("Nodo %i (Lector): He salido de la seccion critica\n", id_nodo);
-		log_print(mi_identificador, "salidaSC");
+		//log_print(mi_identificador, "salidaSC");
 
 		/****************************
 		 *  FIN	Sección crítica		*
@@ -408,6 +409,8 @@ void *lector() {
 	}
 
 	log_print(mi_identificador, "stop");
+	printf("\nNodo %i (Lector): Termino\n", id_nodo);
+
 	return NULL;
 }
 
@@ -445,15 +448,13 @@ void primerLector() {
 
 		for (int i = 0; i < NUM_NODOS; ++i) {
 			if (i != id_nodo) {	//Este if es para que no se envíe una peticion a sí mismo
-				printf("Nodo %i (Lector): Enviando solicitud al nodo: %i\n",
-						id_nodo, i);
+				printf("Nodo %i (Lector): Enviando solicitud al nodo: %i\n", id_nodo, i);
 				msgsnd(buzon[i], &mensaje, sizeof(mensaje) - sizeof(long), 0);
 			}
 		}
 
 		struct testigo_msgbuf testigomsg;
-		msgrcv(buzon[id_nodo], &testigomsg, sizeof(testigomsg) - sizeof(long),
-				1, 0);
+		msgrcv(buzon[id_nodo], &testigomsg, sizeof(testigomsg) - sizeof(long), 1, 0);
 		for (int i = 0; i < NUM_NODOS; i++) {
 			if (testigomsg.mtext.atendidas[i] > atendidas[i])
 				atendidas[i] = testigomsg.mtext.atendidas[i];
@@ -506,7 +507,8 @@ void *escritor() {
 		int mi_identificador = identificador_ejecucion++;
 		sem_post(&acceso_id_ejecucion);
 
-		log_print(mi_identificador, "start");
+		//log_print(mi_identificador, "start");
+		printf("\nNodo %i (escritor): Comienza el proceso\n", id_nodo);
 
 		if (procesos_cola.anulaciones > 0) {
 			tipoproceso = 1;
@@ -519,17 +521,12 @@ void *escritor() {
 			procesos_cola.prereservas--;
 		}
 
-		//printf("\nNodo %i (Escritor): Se ha detectado un proceso de tipo %i\n", id_nodo, tipoproceso);
-
-		//printf("\nNodo %i (Escritor): TESTIGO: %i\n", id_nodo, TESTIGO);
-
-		//printf("\nNodo %i (Escritor): Pulse enter para intentar entrar en seccion critica\n", id_nodo);
-		//while (getchar() != '\n');
-
 		mi_peticion = ++peticion_maxima;
 		peticiones[id_nodo].id_peticion = mi_peticion;
 		peticiones[id_nodo].prioridad = tipoproceso;
 
+		log_print(mi_identificador, "despertar");
+		printf("\nNodo %i (Escritor): Despierto\n", id_nodo);
 
 		sem_wait(&acceso_TESTIGO);
 		if (TESTIGO == 0) {
@@ -544,9 +541,7 @@ void *escritor() {
 
 			for (int i = 0; i < NUM_NODOS; ++i) {
 				if (i != id_nodo) {	//Este if es para que no se envíe una peticion a sí mismo
-					printf(
-							"\nNodo %i (Escritor): Enviando solicitud al nodo: %i\n",
-							id_nodo, i);
+					printf("\nNodo %i (Escritor): Enviando solicitud al nodo: %i\n", id_nodo, i);
 					msgsnd(buzon[i], &mensaje, sizeof(mensaje) - sizeof(long),
 							0);
 				}
@@ -583,7 +578,7 @@ void *escritor() {
 		/****************************
 		 * 	Sección crítica			*
 		 ****************************/
-		log_print(mi_identificador, "entradaSC");
+		//log_print(mi_identificador, "entradaSC");
 		printf(
 				"\nNodo %i (Escritor): Estoy en mi Sección crítica con un proceso de tipo %i\n",
 				id_nodo, tipoproceso);
@@ -591,9 +586,10 @@ void *escritor() {
 		tim.tv_sec = 0;
 		tim.tv_nsec = 20000;
 		nanosleep(&tim, &tim2);
+		sleep(4);
 		printf("\nNodo %i (Escritor): He salido de la seccion critica\n",
 				id_nodo);
-		log_print(mi_identificador, "salidaSC");
+		//log_print(mi_identificador, "salidaSC");
 		/****************************
 		 * 	Sección crítica			*
 		 ****************************/
@@ -612,7 +608,9 @@ void *escritor() {
 			send_token(id_nodo_sig);
 		}
 
-		log_print(mi_identificador, "stop");
+		//log_print(mi_identificador, "stop");
+		printf("\nNodo %i (Escritor): Termina\n", id_nodo);
+
 
 	} while (procesos_cola.anulaciones != 0 || procesos_cola.pagos != 0
 			|| procesos_cola.prereservas != 0);
@@ -645,9 +643,7 @@ void *gestionReceptor() {
 		if (id_peticion_origen > atendidas[origen]) {
 			if (prio_peticion_origen < peticiones[origen].prioridad
 					|| peticiones[origen].id_peticion <= atendidas[origen]) {
-				printf(
-						"\nNodo %i (Receptor): Peticion actualizada para nodo %i al valor de peticion %i\n",
-						id_nodo, origen, id_peticion_origen);
+				printf("\nNodo %i (Receptor): Peticion actualizada para nodo %i al valor de peticion %i\n", id_nodo, origen, id_peticion_origen);
 				peticiones[origen].id_peticion = id_peticion_origen;
 				peticiones[origen].prioridad = prio_peticion_origen;
 				printf("ID PETICION ORIGEN: %i\n", id_peticion_origen);
@@ -743,54 +739,26 @@ void inicializarNodo() {
 	sem_init(&acceso_TESTIGO, 0, 1);
 	sem_init(&acceso_id_ejecucion, 0, 1);
 
-	//TODO Automatizar la creacion de los buzones
-	//Acordarmos darle el testigo al primer nodo. Podría haber sido otro
+	//Acordarmos darle el testigo al primer nodo
 	sem_wait(&acceso_TESTIGO);
-	if (id_nodo == 0)
-		TESTIGO = 1;
-	else
-		TESTIGO = 0;
+	if (id_nodo == 0) 	TESTIGO = 1;
+	else 				TESTIGO = 0;
 	sem_post(&acceso_TESTIGO);
 
-	////////////////////////////////////////////////////////////////////
-
-	//Creamos el BUZON INTERNODO//////////////////////////////////////
-	buzon[id_nodo] = msgget(id_nodo, (0777 | IPC_CREAT));
-	if (buzon[id_nodo] < 0) {
-		printf("Error al crear el buzón internodo\n");
-		perror("msgget");
-		exit(0);
-	} else {
-		printf("Se ha creado el buzón internodo con el ID: %i.\n",
-				buzon[id_nodo]);
+	//Obtenemos todos los buzones internodo de todos los nodos y creamos el nuestro//////////////////////////////////////
+	for (int i = 0; i<NUM_NODOS; i++) {
+		buzon[i] = msgget(i+1, (0777 | IPC_CREAT));
+		if (buzon[i] < 0) { printf("Error al crear el buzón internodo\n"); perror("msgget"); exit(0); }
+		else { printf("Se ha creado el buzón internodo para el nodo %i con el ID %i.\n", i, buzon[i]);}
 	}
-	////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	//Inicializamos el HILO encargado de recepción de peticiones
 	pthread_t hiloReceptor;
-	int estado_hilo_inter = pthread_create(&hiloReceptor, NULL,
-			(void *) gestionReceptor, NULL);
-	if (estado_hilo_inter != 0) {
-		printf("No se ha podido crear el hilo de recepción de peticiones.\n");
-		perror("pthread_create");
-		exit(0);
-	} else {
-		printf("Hilo de recepción de peticiones creado correctamente.\n");
-	}
+	int estado_hilo_inter = pthread_create(&hiloReceptor, NULL, (void *) gestionReceptor, NULL);
+	if (estado_hilo_inter != 0) { printf("No se ha podido crear el hilo de recepción de peticiones.\n"); perror("pthread_create"); exit(0); }
+	else { printf("Hilo de recepción de peticiones creado correctamente.\n"); }
 	//////////////////////////////////////////////////////////////////////////////
-
-	//Pedimos todos los ids de los buzones de los demás nodos.
-	printf("Las colas de mensajes del sistema son: \n");
-	system("ipcs -q");		//Para borrar sería ipcrm --all=msg :)
-	for (int i = 0; i < NUM_NODOS; ++i) {
-		if (i != id_nodo) {
-			printf("\nIntroduzca el id del buzon del nodo %i: ", i);
-			scanf("%i", &buzon[i]);
-			while (getchar() != '\n')
-				; //Este detector de salto de línea está para que no loquée y entre a su sec, criti
-		}
-	}
-	///////////////////////////////////////////////////////////
 
 	//Creamos el buzón intranodo///////////////////////////////////////
 	int clave_intranodo = ftok("./README.md", id_nodo);
@@ -805,7 +773,7 @@ void inicializarNodo() {
 	}
 	////////////////////////////////////////////////////////////////////
 
-	/* semaforos de acceso a variables: (igual no necesitamos todos?? //TODO
+	/* semaforos de acceso a variables: (igual no necesitamos todos?? //TODO Si
 	 sem_t acceso_TESTIGO;
 	 sem_t acceso_dentro;
 	 sem_t acceso_peticiones;
